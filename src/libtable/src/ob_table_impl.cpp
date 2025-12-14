@@ -680,20 +680,27 @@ int ObTableImpl::batch_execute_replace(const ObTableBatchOperation &batch_operat
   char* tname = NULL;
   if (OB_FAIL(batch_fill_kv_pairs(batch_operation, dml))) {
     LOG_WARN("failed to fill kv pairs", K(ret));
-  } else if (OB_FAIL(ob_dup_cstring(alloc_, table_name_, tname))) { // @todo optimize
-    LOG_WARN("failed to dup cstring", K(ret));
+  } else if (OB_FAIL(ob_dup_cstring(alloc_, table_name_, tname))) {
+    // Note: ob_dup_cstring allocates memory from alloc_ for table name.
+    // Consider caching the table name if this function is called frequently.
+    LOG_WARN("failed to dup cstring", K(ret), K(table_name_));
   } else if (OB_FAIL(dml.splice_batch_replace_sql(tname, sql))) {
-    LOG_WARN("splice sql failed", K(ret));
+    LOG_WARN("splice sql failed", K(ret), K(table_name_));
   } else if (OB_FAIL(sql_client_->write(sql.ptr(), affected_rows))) {
-    LOG_WARN("execute sql failed", K(sql), K(ret));
+    LOG_WARN("execute sql failed", K(sql), K(ret), K(affected_rows));
   } else {
-    LOG_DEBUG("execute sql dml succ", K(sql));
+    LOG_DEBUG("execute sql dml succ", K(sql), K(affected_rows));
   }
   table_result.set_type(ObTableOperationType::REPLACE);
   table_result.set_errno(ret);
   int64_t tmp_ret = OB_SUCCESS;
   if (OB_SUCCESS != (tmp_ret = result.push_back(table_result))) {
-    LOG_WARN("failed to push back result", K(tmp_ret));
+    LOG_WARN("failed to push back result", K(tmp_ret), K(ret));
+    // If push_back fails, we should still return the original error code
+    // to maintain error semantics, but log the push_back failure
+    if (OB_SUCCESS == ret) {
+      ret = tmp_ret;
+    }
   }
   return ret;
 }
