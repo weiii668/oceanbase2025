@@ -49,6 +49,23 @@ int ObUnitStatTableOperator::init(share::ObCheckStopProvider &check_stop_provide
   return ret;
 }
 
+/**
+ * @brief Get unit statistics for a specific unit
+ * 
+ * This function retrieves unit statistics (including required_size and partition_cnt)
+ * from the internal system tables for a given tenant and unit.
+ * 
+ * @note This function is currently not implemented and returns OB_SUCCESS.
+ *       The implementation should query the internal system tables to populate
+ *       the unit_stat structure with the unit's statistics information.
+ * 
+ * @param tenant_id The ID of the tenant
+ * @param unit_id The ID of the unit to get statistics for
+ * @param unit_stat Output parameter to store the unit statistics
+ * @return OB_SUCCESS on success, other error codes on failure
+ * 
+ * @todo Implementation needed: Query internal system tables to get unit statistics
+ */
 int ObUnitStatTableOperator::get_unit_stat(uint64_t tenant_id,
                                            uint64_t unit_id,
                                            ObUnitStat &unit_stat) const
@@ -58,6 +75,24 @@ int ObUnitStatTableOperator::get_unit_stat(uint64_t tenant_id,
   return 0;
 }
 
+/**
+ * @brief Get unit statistics for all units in a tenant
+ * 
+ * This function retrieves unit statistics for all units belonging to a specific tenant
+ * and populates the provided unit_stat_map with the results.
+ * 
+ * @note This function is currently not implemented and returns OB_SUCCESS.
+ *       The implementation should query the internal system tables to get statistics
+ *       for all units in the tenant and populate the unit_stat_map.
+ * 
+ * @param tenant_id The ID of the tenant
+ * @param unit_stat_map Output parameter to store the map of unit statistics
+ *                     (key: unit_id, value: ObUnitStat)
+ * @return OB_SUCCESS on success, other error codes on failure
+ * 
+ * @todo Implementation needed: Query internal system tables to get all unit statistics
+ *       for the tenant and populate the unit_stat_map
+ */
 int ObUnitStatTableOperator::get_unit_stat(uint64_t tenant_id,
                                            share::ObUnitStatMap &unit_stat_map) const
 {
